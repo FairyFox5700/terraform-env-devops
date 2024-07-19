@@ -32,7 +32,7 @@ stages:
           # Step 3: Copy files from source to target folder
           - task: CopyFiles@2
             inputs:
-              SourceFolder: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+              SourceFolder: '$(System.DefaultWorkingDirectory)/terraform'
               Contents: '**'
               TargetFolder: '$(Build.ArtifactStagingDirectory)'
               OverWrite: true
@@ -48,6 +48,6 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-              ArtifactName: 'terraform-manifests'
+              ArtifactName: 'terraform'
               publishLocation: 'Container'
             displayName: 'Publish Build Artifacts'
