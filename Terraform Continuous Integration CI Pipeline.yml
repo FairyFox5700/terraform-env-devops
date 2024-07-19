@@ -1,0 +1,53 @@
+trigger:
+  - main
+
+# Stages
+# Stage-1:
+#  Task-1: Copy terraform-manifests files to Build Artifact Directory
+#  Task-2: Publish build artifacts to Azure Pipelines
+# Pipeline Hierarchical Flow: Stages -> Stage -> Jobs -> Job -> Steps -> Task1, Task2, Task3
+
+stages:
+  # Build Stage
+  - stage: Build
+    displayName: Build Stage
+    jobs:
+      - job: Build
+        displayName: Build Job
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          # Step 1: List contents of the system default working directory
+          - bash: |
+              echo "Contents in System Default Working Directory:"
+              ls -R $(System.DefaultWorkingDirectory)
+            displayName: 'List Contents in System Default Working Directory'
+          
+          # Step 2: List contents before copying
+          - bash: |
+              echo "Before copying Contents in Build Artifact Directory:"
+              ls -R $(Build.ArtifactStagingDirectory)
+            displayName: 'List Contents Before Copying'
+          
+          # Step 3: Copy files from source to target folder
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: '$(System.DefaultWorkingDirectory)/terraform-manifests'
+              Contents: '**'
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+              OverWrite: true
+            displayName: 'Copy Files to Build Artifact Directory'
+          
+          # Step 4: List files after copying to the build artifact directory
+          - bash: |
+              echo "After copying to Build Artifact Directory:"
+              ls -R $(Build.ArtifactStagingDirectory)
+            displayName: 'List Contents After Copying'
+          
+          # Step 5: Publish build artifacts to Azure Pipelines
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'terraform-manifests'
+              publishLocation: 'Container'
+            displayName: 'Publish Build Artifacts'
