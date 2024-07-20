@@ -47,9 +47,9 @@ stages:
                 secureFile: 'terraform-azure.pub'
 
           - script: |
-              mkdir -p ssh-keys
-              mv $(Agent.TempDirectory)/terraform-azure.pem ssh-keys/
-              mv $(Agent.TempDirectory)/terraform-azure.pub ssh-keys/
+              mkdir -p ./ssh-keys
+              mv $(Agent.TempDirectory)/terraform-azure.pem ./ssh-keys
+              mv $(Agent.TempDirectory)/terraform-azure.pub ./ssh-keys
             displayName: 'Move secret file to secret-keys directory'    
 
           # Step 4: List files after copying to the build artifact directory
