@@ -47,15 +47,38 @@ stages:
                 secureFile: 'terraform-azure.pub'
 
           - script: |
-              mkdir -p ./ssh-keys
-              mv $(Agent.TempDirectory)/terraform-azure.pem ./ssh-keys
-              mv $(Agent.TempDirectory)/terraform-azure.pub ./ssh-keys
-            displayName: 'Move secret file to secret-keys directory'    
+                echo "Current working directory:"
+                pwd
+                echo "Listing contents of current directory:"
+                ls -la
+
+                echo "Creating ssh-keys directory if it doesn't exist"
+                mkdir -pv ./ssh-keys
+
+                echo "Moving terraform-azure.pem to ssh-keys directory"
+                if [ -f "$(Agent.TempDirectory)/terraform-azure.pem" ]; then
+                    mv -v $(Agent.TempDirectory)/terraform-azure.pem ./ssh-keys/
+                else
+                    echo "terraform-azure.pem not found in $(Agent.TempDirectory)"
+                    exit 1
+                fi
+
+                echo "Moving terraform-azure.pub to ssh-keys directory"
+                if [ -f "$(Agent.TempDirectory)/terraform-azure.pub" ]; then
+                    mv -v $(Agent.TempDirectory)/terraform-azure.pub ./ssh-keys/
+                else
+                    echo "terraform-azure.pub not found in $(Agent.TempDirectory)"
+                    exit 1
+                fi
+
+                echo "Listing contents of ssh-keys directory:"
+                ls -la ./ssh-keys
 
           # Step 4: List files after copying to the build artifact directory
           - bash: |
               echo "After copying to Build Artifact Directory:"
               ls  $(Build.ArtifactStagingDirectory)
+              ls -la
             displayName: 'List Contents After Copying'
           
           # Step 5: Publish build artifacts to Azure Pipelines
