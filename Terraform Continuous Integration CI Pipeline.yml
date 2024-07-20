@@ -51,7 +51,7 @@ stages:
                 pwd
                 echo "Listing contents of current directory:"
                 ls -la
-                cd $(Build.ArtifactStagingDirectory)
+                cd terraform
 
                 echo "Creating ssh-keys directory if it doesn't exist"
                 mkdir -pv ./ssh-keys
